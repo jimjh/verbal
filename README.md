@@ -1,5 +1,6 @@
 Verbal
 =====================
+[![Build Status](https://travis-ci.org/jimjh/verbal.png?branch=master)](https://travis-ci.org/jimjh/verbal)
 
 ## Overview
 Verbal is a Ruby library that helps to construct difficult regular expressions - ported from the awesome JavaScript [VerbalExpressions](https://github.com/jehna/VerbalExpressions).
