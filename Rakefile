@@ -13,15 +13,16 @@ require 'rake'
 
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
-  # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "verbal_expressions"
-  gem.homepage = "http://github.com/ryan-endacott/verbal_expressions"
-  gem.license = "MIT"
+  gem.name = 'verbal'
   gem.summary = %Q{Library that makes difficult regular expressions easy!}
   gem.description = %Q{Verbal Expressions is a library that makes constructing difficult regular expressions simple and easy!}
-  gem.email = "rzeg24@gmail.com"
-  gem.authors = ["Ryan Endacott"]
-  # dependencies defined in Gemfile
+  gem.authors = ['Ryan Endacott', 'Jim Lim']
+  gem.email   = 'jim@jimjh.com'
+  gem.homepage = 'http://github.com/jimjh/verbal'
+  gem.platform = Gem::Platform::RUBY
+  gem.license  = 'MIT'
+  gem.has_rdoc = 'yard'
+  gem.files.include 'LICENSE', 'VERSION', 'README.md', '.yardopts', 'Rakefile'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
@@ -32,13 +33,3 @@ RSpec::Core::RakeTask.new(:spec) do |spec|
 end
 
 task :default => :spec
-
-require 'rdoc/task'
-Rake::RDocTask.new do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ""
-
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "verbal_expressions #{version}"
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
-end
