@@ -17,8 +17,8 @@ Gem::Specification.new do |s|
     "README.md"
   ]
   s.files = [
-    ".document",
     ".rspec",
+    ".travis.yml",
     ".yardopts",
     "Gemfile",
     "Gemfile.lock",
@@ -26,9 +26,9 @@ Gem::Specification.new do |s|
     "README.md",
     "Rakefile",
     "VERSION",
-    "lib/verbal_expressions.rb",
+    "lib/verbal.rb",
     "spec/spec_helper.rb",
-    "spec/verbal_expressions_spec.rb",
+    "spec/verbal_spec.rb",
     "verbal.gemspec"
   ]
   s.homepage = "http://github.com/jimjh/verbal"
