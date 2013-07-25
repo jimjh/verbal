@@ -1,88 +1,133 @@
-# Ruby Verbal Expressions, based on the awesome JavaScript repo by @jehna:
+# Ruby Verbal Expressions, based on the awesome JavaScript repo by @jehna.
+#
 # @see https://github.com/jehna/VerbalExpressions   Original idea
 # @see https://github.com/jimjh/verbal              Main repository
-class VerEx < Regexp
+class Verbal < Regexp
 
+  # @example Create a new RegExp
+  #     verbal = Verbal.new do
+  #       start_of_line
+  #       find 'x'
+  #     end
+  #     verbal =~ 'x' # => 0
   def initialize(&block)
     @prefixes = ""
-    @source = ""
+    @source   = ""
     @suffixes = ""
     @modifiers = "" # TODO: Ruby Regexp option flags
-    @self_before_instance_eval = eval "self"
-    instance_eval &block
+    instance_eval(&block)
     super(@prefixes + @source + @suffixes, @modifiers)
   end
 
-  def method_missing(method, *args, &block)
-    @self_before_instance_eval.send method, *args, &block
-  end
-
-  # We try to keep the syntax as
-  # user-friendly as possible.
-  # So we can use the "normal"
-  # behaviour to split the "sentences"
-  # naturally.
-  # TODO: then is reserved in ruby, so use find or think of a better name
+  # Matches an exact string.
+  # @param [String] value     string to match
+  # @example Replace all dots with the word "Stop".
+  #   paragraph = "Lorem. Dolor."
+  #   verbal    = Verbal.new do
+  #     find '.'
+  #   end
+  #   paragraph.gsub(verbal, 'Stop') # => "Lorem Stop Dolor Stop"
   def find(value)
-    value = sanitize(value)
-    add("(#{value})")
+    append "(?:#{sanitize value})"
   end
 
-  # start or end of line
-
-  def start_of_line(enable = true)
-    @prefixes = '^' if enable
+  # Marks the expression to start at the beginning of a line.
+  # @example Add a hyphen to the beginning of each line.
+  #   lines = "first\nsecond\nthird"
+  #   verbal = Verbal.new do
+  #     start_of_line
+  #   end
+  #   lines.gsub(verbal, '- ') # => "- first\n- second\n- third"
+  def start_of_line
+    @prefixes = '^'
   end
 
-  def end_of_line(enable = true)
-    @suffixes = '$' if enable
+  # Marks the expression to end at the last character of a line.
+  # @example Add a hyphen to the end of each line.
+  #   lines = "first\nsecond\nthird"
+  #   verbal = Verbal.new do
+  #     end_of_line
+  #   end
+  #   lines.gsub(verbal, '- ') # => "first- \nsecond- \nthird"
+  def end_of_line
+    @suffixes = '$'
   end
 
-  # Maybe is used to add values with ?
+  # Add a string to the expression that might appear once.
+  # @param [String] value   the string to look for
+  # @example Find http or https.
+  #   Verbal.new do
+  #     find 'http'
+  #     maybe 's'
+  #   end
   def maybe(value)
-    value = sanitize(value)
-    add("(#{value})?")
+    append "(#{sanitize value})?"
   end
 
-  # Any character any number of times
+  # Matches any character any number of times.
+  # @example Match the entire string.
+  #   Verbal.new do
+  #     anything
+  #   end
   def anything
-    add("(.*)")
+    append '(.*)'
   end
 
-  # Anything but these characters
+  # Matches any number of any character that is not in +value+.
+  # @example Match everything except underscores.
+  #   Verbal.new do
+  #     anything_but '_'
+  #   end
+  # @param [String] value       characters to excluded
   def anything_but(value)
-    value = sanitize(value)
-    add("([^#{value}]*)")
+    append "([^#{sanitize value}]*)"
   end
 
-  # Regular expression special chars
-
-
+  # Adds a universal line break expression.
+  # @example Converts all line breaks to unix-style with \<br\> tag.
+  #   lorem = "Lorem.\r\nDolor\namet."
+  #   verbal = Verbal.new do
+  #     line_break
+  #   end
+  #   lorem.gsub(veral, "<br>\n") # => "Lorem.<br>\nDolor<br>\namet."
   def line_break
-    add("(\\n|(\\r\\n))")
+    append '(\n|(\r\n))'
   end
-
-  # And a shorthand for html-minded
   alias_method :br, :line_break
 
+  # Matches the tab character.
+  # @example Find the tab character.
+  #   "\n\t" =~ Verbal.new { tab | # => 1
   def tab
-    add("\\t")
+    append '\t'
   end
 
-  # Any alphanumeric
+  # Matches a word, which is a continuous chunk of any alphanumeric character.
+  # @example Split a sentence into words.
+  #   s = "this is a sentence"
+  #   s.scan Verbal.new { word } # => ["this", "is", "a", "sentence"]
   def word
-    add("\\w+")
+    append '\w+'
   end
 
-  # Any given character
+  # Matches any one of the characters in +value+.
+  # @param [String] value     string of characters to match
+  # @example Find one of 'abc' in 'xkcd'
+  #   verbal = Verbal.new do
+  #     any_of 'abc'
+  #   end
+  #   'xkcd'.scan verbal # => ['c']
   def any_of(value)
-    value = sanitize(value)
-    add("[#{value}]")
+    append "[#{sanitize value}]"
   end
-
   alias_method :any, :any_of
 
-  # Usage: range( from, to [, from, to ... ] )
+  # Matches a character from the given range.
+  # @param [Array] args    alternate starting and ending characters.
+  # @example Find any character in the alphabet.
+  #   verbal = Verbal.new do
+  #     range 'a', 'z', 'A', 'Z'
+  #   end
   def range(*args)
     value = "["
     args.each_slice(2) do |from, to|
@@ -91,44 +136,48 @@ class VerEx < Regexp
       value += "#{from}-#{to}"
     end
     value += "]"
-    add(value)
+    append value
   end
 
-  # Loops
-
+  # Matches multiple of +value+. Defaults to one or many. You can specify zero
+  # or more by suffixing +value+ with +'*'+.
+  # @param [String] value     string to match
   def multiple(value)
-    value = sanitize(value)
-    value += "+" unless ["+", "*"].include?(value.chars.first)
-    add(value)
+    value = sanitize value
+    value += '+' unless %w[+ *].include? value[-1]
+    append value
   end
 
-  # Adds alternative expressions
-  # TODO: or is a reserved keyword in ruby, think of better name
-  def alternatively(value = nil)
+  # Adds a alternative expression to be matched.
+  # @example Tests if the string begins with 'http://' or 'ftp://'
+  #   link = 'ftp://ftp.google.com/';
+  #   verbal = Verbal.new do
+  #     find 'http'
+  #     maybe 's'
+  #     find '://'
+  #     otherwise
+  #     find 'ftp://'
+  #   end
+  #   link =~ verbal # => 0
+  def otherwise(value = nil)
     @prefixes += "(" unless @prefixes.include?("(")
     @suffixes = ")" + @suffixes unless @suffixes.include?(")")
-    add(")|(")
+    append(")|(")
     find(value) if value
   end
 
   private
 
-    # Sanitation function for adding
-    # anything safely to the expression
+    # Escapes +value+ so that it can be used in a regular expression.
     def sanitize(value)
       case value
-      when Regexp, VerEx
-        value.source
-      else
-        value.gsub(/([^\w])/) { "\\#{$1}" } # Escape non word chars
+      when Regexp then value.source
+      else Regexp.escape value
       end
     end
 
-    # Function to add stuff to the
-    # expression. Also compiles the
-    # new expression so it's ready to
-    # be used.
-    def add(value = '')
+    # Appends +value+ to the regex source.
+    def append(value = '')
       @source += value
     end
 
