@@ -1,10 +1,12 @@
 Verbal
 =====================
 [![Build Status](https://travis-ci.org/jimjh/verbal.png?branch=master)](https://travis-ci.org/jimjh/verbal)
+[![Gem Version](https://badge.fury.io/rb/verbal.png)](http://badge.fury.io/rb/verbal)
 
 ## Overview
 Verbal is a Ruby library that helps to construct difficult regular expressions.
 It's ported from the awesome JavaScript [VerbalExpressions](https://github.com/jehna/VerbalExpressions).
+Detailed documentation is available at [rubydoc](http://rubydoc.info/gems/verbal/frames).
 
 ## Installation
 
