@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "verbal"
-  s.version = "0.1.1"
+  s.version = "0.1.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ryan Endacott", "Jim Lim"]
-  s.date = "2013-07-25"
+  s.date = "2013-07-26"
   s.description = "Verbal Expressions is a library that makes constructing difficult regular expressions simple and easy!"
   s.email = "jim@jimjh.com"
   s.extra_rdoc_files = [
@@ -27,7 +27,20 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "lib/verbal.rb",
+    "spec/anything_but_spec.rb",
+    "spec/anything_spec.rb",
+    "spec/capture_spec.rb",
+    "spec/end_of_line_spec.rb",
+    "spec/end_of_string_spec.rb",
+    "spec/find_spec.rb",
+    "spec/line_break_spec.rb",
+    "spec/maybe_spec.rb",
+    "spec/multiple_spec.rb",
+    "spec/otherwise_spec.rb",
+    "spec/range_spec.rb",
     "spec/spec_helper.rb",
+    "spec/start_of_line_spec.rb",
+    "spec/start_of_string_spec.rb",
     "spec/verbal_spec.rb",
     "verbal.gemspec"
   ]
