@@ -62,6 +62,21 @@ result = replace_me.gsub( expression, "duck" );
 puts result # Outputs "Replace duck with a duck"
 ```
 
+### Capturing strings
+
+```ruby
+# create expression
+verbal = Verbal.new do
+  capture { anything }
+  find /\sby\s/
+  capture { anything }
+end
+# match against test string
+data = verbal.match('this is it by michael jackson')
+puts data[1] # >> 'this is it'
+puts data[2] # >> 'michael jackson'
+```
+
 ## Issues
  - I haven't yet ported the modifier code because Ruby Regexp handles modifiers a little differently.
 
