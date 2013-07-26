@@ -53,6 +53,32 @@ class Verbal < Regexp
     @suffixes = '$'
   end
 
+  # Marks the expression to start at the beginning of the string.
+  # @example Matching the entire string
+  #   verbal = Verbal.new do
+  #     start_of_string
+  #     find 'dinosaur'
+  #     end_of_string
+  #   end
+  #   verbal.match('dinosaur')  # matches
+  #   verbal.match('a dinosaur') # does not match
+  def start_of_string
+    @prefixes = @prefixes.prepend '\A'
+  end
+
+  # Marks the expression to start at the end of the string.
+  # @example Matching the entire string
+  #   verbal = Verbal.new do
+  #     start_of_string
+  #     find 'dinosaur'
+  #     end_of_string
+  #   end
+  #   verbal.match('dinosaur')  # matches
+  #   verbal.match('dinosaurs') # does not match
+  def end_of_string
+    @suffixes += '\z'
+  end
+
   # Add a string to the expression that might appear once.
   # @param [String] value   the string to look for
   # @example Find http or https.
