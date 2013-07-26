@@ -2,31 +2,6 @@ require 'spec_helper'
 
 describe Verbal do
 
-  describe '#find' do
-
-    let(:matcher) do
-      Verbal.new do
-        find 'lions'
-      end
-    end
-
-    it 'should correctly build find regex' do
-      matcher.source.should == '(?:lions)'
-    end
-
-    it 'should correctly match find' do
-      matcher.match('lions').should be_true
-    end
-
-    it 'should match part of a string with find' do
-      matcher.match('lions, tigers, and bears, oh my!').should be_true
-    end
-
-    it 'should only match the `find` part of a string' do
-      matcher.match('lions, tigers, and bears, oh my!')[0].should == 'lions'
-    end
-  end
-
   describe 'URL Regex Test' do
 
     let(:matcher) do
@@ -42,7 +17,7 @@ describe Verbal do
     end
 
     it 'successfully builds regex for matching URLs' do
-      matcher.source.should == "^(?:http)(s)?(?:://)(www\\.)?([^\\ ]*)$"
+      matcher.source.should == "^(?:http)(?:s)?(?:://)(?:www\\.)?(?:[^\\ ]*)$"
     end
 
     it 'matches regular http URL' do

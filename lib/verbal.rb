@@ -5,16 +5,16 @@
 class Verbal < Regexp
 
   # @example Create a new RegExp
-  #     verbal = Verbal.new do
-  #       start_of_line
-  #       find 'x'
-  #     end
-  #     verbal =~ 'x' # => 0
+  #   verbal = Verbal.new do
+  #     start_of_line
+  #     find 'x'
+  #   end
+  #   verbal =~ 'x' # => 0
   def initialize(&block)
-    @prefixes = ""
-    @source   = ""
-    @suffixes = ""
-    @modifiers = "" # TODO: Ruby Regexp option flags
+    @prefixes = ''
+    @source   = ''
+    @suffixes = ''
+    @modifiers = '' # TODO: Ruby Regexp option flags
     instance_eval(&block)
     super(@prefixes + @source + @suffixes, @modifiers)
   end
@@ -61,7 +61,7 @@ class Verbal < Regexp
   #     maybe 's'
   #   end
   def maybe(value)
-    append "(#{sanitize value})?"
+    append "(?:#{sanitize value})?"
   end
 
   # Matches any character any number of times.
@@ -70,7 +70,7 @@ class Verbal < Regexp
   #     anything
   #   end
   def anything
-    append '(.*)'
+    append '(?:.*)'
   end
 
   # Matches any number of any character that is not in +value+.
@@ -80,7 +80,7 @@ class Verbal < Regexp
   #   end
   # @param [String] value       characters to excluded
   def anything_but(value)
-    append "([^#{sanitize value}]*)"
+    append "(?:[^#{sanitize value}]*)"
   end
 
   # Adds a universal line break expression.
@@ -91,7 +91,7 @@ class Verbal < Regexp
   #   end
   #   lorem.gsub(veral, "<br>\n") # => "Lorem.<br>\nDolor<br>\namet."
   def line_break
-    append '(\n|(\r\n))'
+    append '(?:\n|(?:\r\n))'
   end
   alias_method :br, :line_break
 
@@ -139,13 +139,19 @@ class Verbal < Regexp
     append value
   end
 
-  # Matches multiple of +value+. Defaults to one or many. You can specify zero
-  # or more by suffixing +value+ with +'*'+.
-  # @param [String] value     string to match
+  # Matches one or many of value.
+  # @param [String|Regexp] value     string to match
+  # @example Matching multiples of "xyz"
+  #   verbal = Verbal.new { multiple 'xyz' }
+  #   verbal.match('this is xyzxyz')[0] # => 'xyzxyz'
+  # @example Matching multiples of /[xyz]/
+  #   verbal = Verbal.new { multiple /[xyz]/ }
+  #   verbal.match('abcxxyz')[0] # => 'xxyz'
   def multiple(value)
-    value = sanitize value
-    value += '+' unless %w[+ *].include? value[-1]
-    append value
+    append case value
+    when Regexp then "(#{value.source})+"
+    else "(#{sanitize value})+"
+    end
   end
 
   # Adds a alternative expression to be matched.
