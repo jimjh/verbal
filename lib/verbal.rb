@@ -192,10 +192,24 @@ class Verbal < Regexp
   #   end
   #   link =~ verbal # => 0
   def otherwise(value = nil)
-    @prefixes += "(" unless @prefixes.include?("(")
-    @suffixes = ")" + @suffixes unless @suffixes.include?(")")
-    append(")|(")
+    @prefixes += "(?:"
+    @suffixes = ")" + @suffixes
+    append(")|(?:")
     find(value) if value
+  end
+
+  # Captures the nested regular expression.
+  # @example Capture the title of the concert and performer
+  #   verbal = Verbal.new do
+  #     capture { anything }
+  #     find /\sby\s/
+  #     capture { anything }
+  #   end
+  #   data = verbal.match('this is it by michael jackson')
+  #   data[1] # => 'this is it'
+  #   data[2] # => 'michael jackson'
+  def capture(&block)
+    append "(#{Verbal.new(&block).source})"
   end
 
   private
