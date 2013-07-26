@@ -63,7 +63,7 @@ class Verbal < Regexp
   #   verbal.match('dinosaur')  # matches
   #   verbal.match('a dinosaur') # does not match
   def start_of_string
-    @prefixes = @prefixes.prepend '\A'
+    @prefixes = '\A' + @prefixes
   end
 
   # Marks the expression to start at the end of the string.
