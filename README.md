@@ -8,6 +8,8 @@ Verbal is a Ruby library that helps to construct difficult regular expressions.
 It's ported from the awesome JavaScript [VerbalExpressions](https://github.com/jehna/VerbalExpressions).
 Detailed documentation is available at [rubydoc](http://rubydoc.info/gems/verbal/frames).
 
+[Getting started with the ruby gem.](http://blog.jimjh.com/introducting-verbal.html)
+
 ## Installation
 
 ```sh
